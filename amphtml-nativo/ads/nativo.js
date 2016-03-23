@@ -30,25 +30,19 @@ export function nativo(global, data) {
     var ntvAd;
     !function(){
 
-        
-        var adViewedTimeout, delayedAdLoad =false; loc = window.context.location;
+        /// 
+        // Private 
+        ///    
+        var adViewedTimeout, delayedAdLoad =false, percentageOfadViewed, loc = window.context.location;
         
         function isValidDelayTime(delay){
             return (typeof delay != "undefined" && !isNaN(delay) && parseInt(delay) >=0) ? true : false;
-        }
-        
+        }        
         function isDelayedTimeStart(data){
            return  isValidDelayTime(data.delayByTime) && ("delay" in data) && !("delayByView" in data) ? true : false;
         }
         function isDelayedViewStart(data){
            return  isValidDelayTime(data.delayByTime) && ("delayByView" in data) ? true : false;
-        }        
-        function getLastPositionCoordinates (positions){ 
-            return positions[positions.length-1];
-        }        
-        function viewabilityConfiguration(positions){   
-            var coordinates = getLastPositionCoordinates(positions);            
-            global.PostRelease.checkAmpViewability((((coordinates.intersectionRect.height*100)/coordinates.boundingClientRect.height)/100))   
         }        
         function loadAdWhenViewed(){
                     var g = global;
@@ -70,10 +64,35 @@ export function nativo(global, data) {
                         },
                         parseInt(data.delayByTime)
                     );
+        }
+        function getLastPositionCoordinates (positions){ 
+            return positions[positions.length-1];
         }        
+        function setPercentageOfadViewed(percentage){
+            percentageOfadViewed =percentage;
+        }
+        
+       // Used to track ad during scrolling event and trigger checkIsAdVisible method on PostRelease instance
+        function viewabilityConfiguration(positions){   
+            var coordinates = getLastPositionCoordinates(positions);            
+            setPercentageOfadViewed((((coordinates.intersectionRect.height*100)/coordinates.boundingClientRect.height)/100));  
+            console.log(global.PostRelease.checkAmpViewability())
+            global.PostRelease.checkIsAdVisible();            
+        }        
+                
+        
+        ////
+        // Public 
+        ///    
+        ntvAd.getPercentageOfadViewed = function(){
+            return percentageOfadViewed;
+        }
+        
+        
         ntvAd.getScriptURL = function(){
             return loc.protocol + '//s.ntv.io/serve/load.js';
         };
+        // Configuration setup is based on the parameters/attributes associated with the amp-ad node
         ntvAd.setupAd = function(){
             global._prx = [['cfg.Amp']];         
             for(var key in data){
@@ -91,20 +110,28 @@ export function nativo(global, data) {
                         (isValidDelayTime(data.delayByTime)) ? global._prx.push(['cfg.SetNoAutoStart']) : "";
                     break;
                 }
-            }
-            // ADD TRACKING HANDLER TO OBSERVER
-            global.context.observeIntersection(viewabilityConfiguration)
-            
-        };        
-        ntvAd.delayedTimeStart = function(){
+            }            
+        };
+        
+        //Used to Delay Start and Initalize Tracking. This is a callback AMP will use once script is loaded        
+        ntvAd.Start = function(){
             if(isDelayedTimeStart(data)) {
                 loadAdWhenTimedout();
             }else if(isDelayedViewStart(data)){
                 loadAdWhenViewed();
             }
-        };      
-        
+            global.PostRelease.checkAmpViewability = function(){
+                return  ntvAd.getPercentageOfadViewed();
+            }
+            
+            // ADD TRACKING HANDLER TO OBSERVER
+            global.context.observeIntersection(viewabilityConfiguration)
+        };              
     }(ntvAd || (ntvAd={}),global,data);
+    
+    //Setup Configurations
     ntvAd.setupAd();
-    writeScript(global, ntvAd.getScriptURL(),ntvAd.delayedTimeStart);
+    
+    //Load Nativo Script
+    writeScript(global, ntvAd.getScriptURL(),ntvAd.Start);
 }
