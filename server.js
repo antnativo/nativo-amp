@@ -6,8 +6,8 @@ var fs = require("fs");
 
 var server = restify.createServer();
 var https_options = {
-  key: fs.readFileSync('/etc/ssl/self-signed/localhost.key'),
-  certificate: fs.readFileSync('/etc/ssl/self-signed/localhost.crt')
+  key: fs.readFileSync('./self-signed/localhost.key'),
+  certificate: fs.readFileSync('./self-signed/localhost.crt')
 };
 var https_server =  restify.createServer(https_options);
 server.use(restify.acceptParser(server.acceptable));
