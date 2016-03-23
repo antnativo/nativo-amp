@@ -25,6 +25,8 @@ export function nativo(global, data) {
   //console.log("Nativo Window",window);
   //console.log("Nativo Global",global.context);
   //console.log("Nativo Data",data);
+  
+  
     var ntvAd;
     !function(){
 
@@ -40,18 +42,12 @@ export function nativo(global, data) {
         }
         function isDelayedViewStart(data){
            return  isValidDelayTime(data.delayByTime) && ("delayByView" in data) ? true : false;
-        }
-        
-        function getLastPositionCoordinates (positions){ return positions[positions.length-1];};
-        
-        ntvAd.getScriptURL = function(){
-            return loc.protocol + '//s.ntv.io/serve/load.js';
-        }
-
-        ntvAd.viewabilityConfiguration= function(positions){
-            
-            var coordinates = getLastPositionCoordinates(positions);
-            
+        }        
+        function getLastPositionCoordinates (positions){ 
+            return positions[positions.length-1];
+        }        
+        function viewabilityConfiguration(positions){            
+            var coordinates = getLastPositionCoordinates(positions);            
             if((typeof adViewedTimeout == "number" || typeof adViewedTimeout == "undefined") 
                 && !adViewed 
                 && coordinates.intersectionRect.height >= (coordinates.boundingClientRect.height/2) ) {
@@ -62,15 +58,8 @@ export function nativo(global, data) {
                         alert("Ad Viewed")
                     },1000);
             }
-
-            //if((coordinates.intersectionRect.top == (coordinates.rootBounds.top + coordinates.boundingClientRect.y))){
-            if(coordinates.intersectionRect.height >= (coordinates.boundingClientRect.height/2) ){
-                console.log(coordinates)
-            }
-
-        };
-        
-        ntvAd.loadAdWhenViewed = function(){
+        }        
+        function loadAdWhenViewed(){
                     var g = global;
                     global.context.observeIntersection(function(positions){
                         var coordinates = getLastPositionCoordinates(positions);            
@@ -81,9 +70,8 @@ export function nativo(global, data) {
                                 }
                         }
                     });
-        }
-        
-        ntvAd.loadAdWhenTimedout = function(){
+        }        
+        function loadAdWhenTimedout(){
           var g = global;  
           setTimeout(function(){
                             g.PostRelease.Start();
@@ -91,10 +79,12 @@ export function nativo(global, data) {
                         },
                         parseInt(data.delayByTime)
                     );
+        }        
+        ntvAd.getScriptURL = function(){
+            return loc.protocol + '//s.ntv.io/serve/load.js';
         };
-
         ntvAd.setupAd = function(){
-            global._prx = []; //[['cfg.SetNoAutoStart']];            
+            global._prx = [];         
             for(var key in data){
                 switch(key){
                     case "premium":
@@ -111,21 +101,19 @@ export function nativo(global, data) {
                     break;
                 }
             }
-            global.context.observeIntersection(ntvAd.viewabilityConfiguration)
+            // ADD TRACKING HANDLER TO OBSERVER
+            global.context.observeIntersection(viewabilityConfiguration)
             
-        };
-        
+        };        
         ntvAd.delayedTimeStart = function(){
             if(isDelayedTimeStart(data)) {
-                ntvAd.loadAdWhenTimedout();
+                loadAdWhenTimedout();
             }else if(isDelayedViewStart(data)){
-                ntvAd.loadAdWhenViewed();
+                loadAdWhenViewed();
             }
-        }
-
-        ntvAd.setupAd();
+        };      
         
     }(ntvAd || (ntvAd={}),global,data);
-    
+    ntvAd.setupAd();
     writeScript(global, ntvAd.getScriptURL(),ntvAd.delayedTimeStart);
 }
