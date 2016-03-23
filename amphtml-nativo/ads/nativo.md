@@ -49,6 +49,10 @@ limitations under the License.
  <tr>   
     <td>5)</td><td>data-delay-by-view</td><td>(required with data-delay) WIll delay render until ad is in view</td>
 </tr>
+<tr>
+    <td>6)</td><td>data-request-url</td><td>Used to pass a domain to Nativo script. If no value provided, the domain of the current page will be used</td>
+
+</tr>
 </tbody>
 </table>
 

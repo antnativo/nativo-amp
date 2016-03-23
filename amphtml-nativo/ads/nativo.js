@@ -31,7 +31,7 @@ export function nativo(global, data) {
     !function(){
 
         
-        var adViewedTimeout, adViewed = false, delayedAdLoad =false; loc = window.context.location;
+        var adViewedTimeout, delayedAdLoad =false; loc = window.context.location;
         
         function isValidDelayTime(delay){
             return (typeof delay != "undefined" && !isNaN(delay) && parseInt(delay) >=0) ? true : false;
@@ -46,18 +46,9 @@ export function nativo(global, data) {
         function getLastPositionCoordinates (positions){ 
             return positions[positions.length-1];
         }        
-        function viewabilityConfiguration(positions){            
+        function viewabilityConfiguration(positions){   
             var coordinates = getLastPositionCoordinates(positions);            
-            if((typeof adViewedTimeout == "number" || typeof adViewedTimeout == "undefined") 
-                && !adViewed 
-                && coordinates.intersectionRect.height >= (coordinates.boundingClientRect.height/2) ) {
-                    clearTimeout(adViewedTimeout);
-                    adViewedTimeout = setTimeout(function(){
-                        adViewed = true;
-                        // INTERFACE WITH NATIVO TRACKER API
-                        alert("Ad Viewed")
-                    },1000);
-            }
+            global.PostRelease.checkAmpViewability((((coordinates.intersectionRect.height*100)/coordinates.boundingClientRect.height)/100))   
         }        
         function loadAdWhenViewed(){
                     var g = global;
@@ -84,14 +75,14 @@ export function nativo(global, data) {
             return loc.protocol + '//s.ntv.io/serve/load.js';
         };
         ntvAd.setupAd = function(){
-            global._prx = [];         
+            global._prx = [['cfg.Amp']];         
             for(var key in data){
                 switch(key){
                     case "premium":
                         global._prx.push(['cfg.SetUserPremium']);
                     break;
                     case "requestUrl":
-                        global._prx.push(["cfg.RequestUrl", loc.origin]);
+                        global._prx.push(["cfg.RequestUrl", data[key] || loc.origin]);
                     break;                        
                     case "debug":
                         global._prx.push(['cfg.Debug']);
