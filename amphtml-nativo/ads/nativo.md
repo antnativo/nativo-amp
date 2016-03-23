@@ -19,11 +19,31 @@ limitations under the License.
 ## Example
 
 ```html
-<amp-ad width=320 height=90
-    type="nativo"
-    layout="responsive">
+<amp-ad
+  type="nativo"
+  height="150"
+  width="350">
 </amp-ad>
 ```
+
+## PARAMS
+<table>
+<thead>
+    <tr>
+        <th>#</th><th>Attribute</th><th>Description</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td>1)</td><td>data-premium</td><td>(optional) Will switch to premium</td>
+    <td>2)</td><td>data-debug</td><td>(optional) (optional) WIll enable debug</td>
+    <td>3)</td><td>data-delay</td><td>(optional) Will set autostart to false and add will be load based on either timeout or when in view</td>
+    <td>4)</td><td>data-delay-by-time</td><td>(required with data-delay) WIll delay render of add based off millisecond time</td>
+    <td>5)</td><td>data-delay-by-view</td><td>(required with data-delay) WIll delay render until ad is in view</td>
+
+</tr>
+</tbody>
+</table>
 
 ## Configuration
 
