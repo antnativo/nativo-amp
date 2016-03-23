@@ -1,6 +1,6 @@
 # nativo-amp
 
-#TERMIAL
+# TERMIAL
 
 RUN GULP FOR AMP <br>
 1) cd amp/amphtml-nativo<br>
@@ -12,3 +12,7 @@ RUN NODE SERVER<br>
 <br>
 # BROWSER
 1) Visit http://localhost:8000/examples/ads.amp.html
+
+# CODE
+Nativo AMP code lives Here:<br>
+amp/amphtml-nativo/ads/nativo.js<br>
