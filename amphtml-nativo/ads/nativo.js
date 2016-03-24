@@ -76,7 +76,6 @@ export function nativo(global, data) {
         function viewabilityConfiguration(positions){   
             var coordinates = getLastPositionCoordinates(positions);            
             setPercentageOfadViewed((((coordinates.intersectionRect.height*100)/coordinates.boundingClientRect.height)/100));  
-            console.log(global.PostRelease.checkAmpViewability())
             global.PostRelease.checkIsAdVisible();            
         }        
                 
