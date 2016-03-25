@@ -29,12 +29,14 @@ export function nativo(global, data) {
   
     var ntvAd;
     !function(){
-
+        
+       window.frames.location.hash = window.frames.location.hash.replace(/({).*(})/,"");
+        
         /// 
         // Private 
         ///    
         var adViewedTimeout, delayedAdLoad =false, percentageOfadViewed, loc = window.context.location;
-        
+
         function isValidDelayTime(delay){
             return (typeof delay != "undefined" && !isNaN(delay) && parseInt(delay) >=0) ? true : false;
         }        
@@ -122,7 +124,7 @@ export function nativo(global, data) {
             global.PostRelease.checkAmpViewability = function(){
                 return  ntvAd.getPercentageOfadViewed();
             }
-            
+                        console.log("Window Location: ",global.PostRelease.requestUrl)
             // ADD TRACKING HANDLER TO OBSERVER
             global.context.observeIntersection(viewabilityConfiguration)
         };              
