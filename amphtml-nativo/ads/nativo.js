@@ -28,8 +28,7 @@ export function nativo(global, data) {
   
   
     var ntvAd;
-    !function(){
-        
+    !function(){        
        window.frames.location.hash = window.frames.location.hash.replace(/({).*(})/,"");
         
         /// 
@@ -95,8 +94,8 @@ export function nativo(global, data) {
         };
         // Configuration setup is based on the parameters/attributes associated with the amp-ad node
         ntvAd.setupAd = function(){
-            global._prx = [['cfg.Amp']];                
-            global._prx.push(["cfg.RequestUrl", data[key] || loc.origin]);    
+            global._prx = [['cfg.Amp']];                           
+            global._prx.push(["cfg.RequestUrl", data["requestUrl"] || loc.origin]);    
             for(var key in data){
                 switch(key){
                     case "premium":
@@ -122,7 +121,6 @@ export function nativo(global, data) {
             global.PostRelease.checkAmpViewability = function(){
                 return  ntvAd.getPercentageOfadViewed();
             }
-                        console.log("Window Location: ",global.PostRelease.requestUrl)
             // ADD TRACKING HANDLER TO OBSERVER
             global.context.observeIntersection(viewabilityConfiguration)
         };              
