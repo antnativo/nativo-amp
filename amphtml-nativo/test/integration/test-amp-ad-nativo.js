@@ -45,6 +45,13 @@ describe('Rendering of one ad', () => {
             
             expect(iframe.src).to.match(/http\:\/\/ads\.localhost:8000\/dist\.3p\/(.*)/);
         }).then(() => {
+        return poll('frame to load', () => {
+            return iframe.contentWindow && iframe.contentWindow.document &&
+                iframe.contentWindow.document.getElementById('c');
+            });
+        }).then(unusedCanvas => {
+            return poll('3p JS to load.', () => iframe.contentWindow.context);
+        }).then(() => {
             return poll('render-start message received', () => {
                 return fixture.messages.filter(message => {
                 return message.type == 'render-start';
